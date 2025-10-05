@@ -9,8 +9,7 @@ Este projeto oferece uma aplicação completa para processamento e manipulação
 - **Espelhamento**: Espelhamento horizontal e vertical
 
 ### 🎨 Operações de Filtragem
-- **Redução de Ruído**: Filtros para remoção de ruídos em imagens
-- **Filtros Passa-Baixa**: Suavização de imagens
+- **Redução de Ruído**: Filtros para remoção de ruídos em imagens (moda e mediana)
 
 ### 🔍 Operações de Detecção de Bordas
 - **Operador Roberts**: Detecção de bordas usando o operador de Roberts
