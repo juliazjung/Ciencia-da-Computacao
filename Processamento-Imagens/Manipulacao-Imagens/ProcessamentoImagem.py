@@ -1,5 +1,6 @@
 from PIL import Image
 import numpy as np
+import cv2
 
 class ProcessamentoImagem:
     def __init__(self, caminho):
@@ -14,6 +15,7 @@ class ProcessamentoImagem:
         self.matrizAtual = self.matrizOriginal
         self.altura = 0
         self.largura = 0
+        self.contador = 0
 
         # Salva a imagem original em txt
         self.salvaMatrizTxt("matrizPixels_original.txt")
@@ -42,10 +44,15 @@ class ProcessamentoImagem:
         with open(nomeArquivo, "w", encoding="utf-8") as arquivo:
             for linha in linhas_txt:
                 arquivo.write(linha)
+    
+    def recarregarImagem(self):
+        self.imagemAtual = self.imagemOriginal
+        self.matrizAtual = self.matrizOriginal
 
     def recriarImagem(self):
+        self.contador += 1
         self.imagemAtual = Image.fromarray(self.matrizAtual, mode='L')
-        self.imagemAtual.save("imagem_atual.jpg")
+        self.imagemAtual.save("imagem_atual" + str(self.contador) + ".jpg")
     
     # Rotação 90° para a direita (horário)
     def rotacao90Direita(self):
@@ -140,3 +147,46 @@ class ProcessamentoImagem:
         moda = valoresUnicos[indiceModa]
     
         return moda
+    
+    def operadorRoberts(self):
+        matriz = self.matrizAtual.astype(np.float32)
+
+        resultado = np.zeros((self.altura, self.largura), dtype=np.float32)
+        
+        # Máscaras de Roberts
+        # Gx = [[1, 0], [0, -1]]
+        # Gy = [[0, 1], [-1, 0]]
+
+        for i in range(self.altura - 1):
+            for j in range(self.largura - 1):
+                # Aplicar máscara Gx
+                gx = (1 * matriz[i, j] + (-1) * matriz[i + 1, j + 1])
+                
+                # Aplicar máscara Gy
+                gy = (1 * matriz[i, j + 1] + (-1) * matriz[i + 1, j])
+                
+                # Magnitude do gradiente
+                magnitude = np.sqrt(gx**2 + gy**2)
+                resultado[i, j] = magnitude
+    
+        resultado = np.clip(resultado, 0, 255)
+        self.matrizAtual = resultado.astype(np.uint8)
+
+        self.salvaMatrizTxt("matrizPixels_atual.txt")
+        self.recriarImagem()
+
+    def operadorCanny(self):
+        # Verificar se a imagem já está em escala de cinza
+        if len(self.matrizAtual.shape) == 3:
+            img_cinza = cv2.cvtColor(self.matrizAtual, cv2.COLOR_BGR2GRAY)
+        else:
+            img_cinza = self.matrizAtual
+        
+        # Aplicar Canny
+        img_bordas = cv2.Canny(img_cinza, 50, 150)
+
+        # Atualizar a matriz atual
+        self.matrizAtual = img_bordas
+
+        self.salvaMatrizTxt("matrizPixels_atual.txt")
+        self.recriarImagem()

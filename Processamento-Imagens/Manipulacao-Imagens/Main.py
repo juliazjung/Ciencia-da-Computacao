@@ -7,7 +7,7 @@ class Main:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("Processamento de imagens")
-        self.root.geometry("500x300")
+        self.root.geometry("1100x300")
         
         self.criar_widgets()
 
