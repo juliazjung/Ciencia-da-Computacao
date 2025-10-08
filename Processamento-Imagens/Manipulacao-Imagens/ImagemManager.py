@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import messagebox, ttk
 from PIL import Image, ImageTk
 from ProcessamentoImagem import ProcessamentoImagem
+from ArquivoManager import ArquivoManager
 
 class ImagemManager:
     def __init__(self, parent, caminho):
@@ -60,9 +61,11 @@ class ImagemManager:
             )
             btn.grid(row=i//2, column=i%2, padx=5, pady=5, sticky="ew")
 
-         # Botão recriar
+        btn_alterar = tk.Button(frame, text="Alterar imagem", command=self.alterarImagem)
+        btn_alterar.grid(row=len(botoes_roteamento), column=0, columnspan=2, padx=5, pady=10, sticky="ew")
+
         btn_recriar = tk.Button(frame, text="Recriar imagem", command=self.recarregarImagem)
-        btn_recriar.grid(row=len(botoes_roteamento), column=0, columnspan=2, padx=5, pady=10, sticky="ew")
+        btn_recriar.grid(row=len(botoes_roteamento) + 1, column=0, columnspan=2, padx=5, pady=5, sticky="ew")
         
         self._configurar_grid(frame)
 
@@ -161,6 +164,15 @@ class ImagemManager:
             campos_obrigatorios["aplicacao"], 
             campos_obrigatorios["reducao"]
         )
+        self.carregarImagem()
+
+    def alterarImagem(self):
+        ArquivoManager(self.janela, self)
+
+    def atualizarArquivo(self, caminhoArquivo):
+        # Callback chamado pela janela de seleção
+        self.caminhoArquivo = caminhoArquivo
+        self.processamentoImagem.importarImagem(caminhoArquivo)
         self.carregarImagem()
 
     def run(self):

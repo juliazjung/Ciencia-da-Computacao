@@ -5,11 +5,11 @@ import cv2
 class ProcessamentoImagem:
     def __init__(self, caminho):
         self.caminhoImagem = caminho
-        self.importarImagem()
+        self.importarImagem(caminho)
 
-    def importarImagem(self):
+    def importarImagem(self, caminho):
         # Importa imagem e converte para tons de cinza
-        self.imagemOriginal = Image.open(self.caminhoImagem).convert('L')
+        self.imagemOriginal = Image.open(caminho).convert('L')
         self.matrizOriginal = np.array(self.imagemOriginal)
         self.imagemAtual = self.imagemOriginal
         self.matrizAtual = self.matrizOriginal
