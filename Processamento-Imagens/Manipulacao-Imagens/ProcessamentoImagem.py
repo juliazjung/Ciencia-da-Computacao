@@ -182,11 +182,44 @@ class ProcessamentoImagem:
         else:
             img_cinza = self.matrizAtual
         
-        # Aplicar Canny
         img_bordas = cv2.Canny(img_cinza, 50, 150)
 
-        # Atualizar a matriz atual
         self.matrizAtual = img_bordas
 
         self.salvaMatrizTxt("matrizPixels_atual.txt")
+        self.recriarImagem()
+    
+    def operadorSobel(self):
+        self.altura, self.largura = self.matrizAtual.shape
+        matriz = self.matrizAtual.astype(np.float32)
+        resultado = np.zeros((self.altura, self.largura), dtype=np.float32)
+
+        Gx = np.array([[-1, 0, 1],
+                       [-2, 0, 2],
+                       [-1, 0, 1]], dtype=np.float32)
+        Gy = np.array([[-1, -2, -1],
+                       [ 0,  0,  0],
+                       [ 1,  2,  1]], dtype=np.float32)
+
+        for i in range(1, self.altura - 1):
+            for j in range(1, self.largura - 1):
+                regiao = matriz[i-1:i+2, j-1:j+2]
+                gx = np.sum(Gx * regiao)
+                gy = np.sum(Gy * regiao)
+                magnitude = np.sqrt(gx**2 + gy**2)
+                resultado[i, j] = magnitude
+
+        resultado = np.clip(resultado, 0, 255)
+        self.matrizAtual = resultado.astype(np.uint8)
+        self.salvaMatrizTxt("matrizPixels_sobel.txt")
+        self.recriarImagem()
+
+    def transformadaFourier(self):
+        matriz = self.matrizAtual.astype(np.float32)
+        f = np.fft.fft2(matriz)
+        fshift = np.fft.fftshift(f)
+        magnitude = 20 * np.log(np.abs(fshift) + 1)
+        magnitude = np.clip(magnitude, 0, 255)
+        self.matrizAtual = magnitude.astype(np.uint8)
+        self.salvaMatrizTxt("matrizPixels_fourier.txt")
         self.recriarImagem()

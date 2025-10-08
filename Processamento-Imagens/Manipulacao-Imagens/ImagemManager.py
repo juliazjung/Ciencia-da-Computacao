@@ -63,7 +63,7 @@ class ImagemManager:
          # Botão recriar
         btn_recriar = tk.Button(frame, text="Recriar imagem", command=self.recarregarImagem)
         btn_recriar.grid(row=len(botoes_roteamento), column=0, columnspan=2, padx=5, pady=10, sticky="ew")
-
+        
         self._configurar_grid(frame)
 
     def recarregarImagem (self):
@@ -78,8 +78,8 @@ class ImagemManager:
         botoes_operacoes = [
             ("Roberts", self.processamentoImagem.operadorRoberts),
             ("Canny", self.processamentoImagem.operadorCanny),
-            ("Op 3", self.processamentoImagem.operadorRoberts),
-            ("Op 4", self.processamentoImagem.operadorRoberts),
+            ("Sobel", self.processamentoImagem.operadorSobel),
+            ("Transformada de Fourier", self.processamentoImagem.transformadaFourier),
         ]
 
         for i, (texto, comando) in enumerate(botoes_operacoes):
